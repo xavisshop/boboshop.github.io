@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户控制面板 - 在线商店</title>
+    <link rel="stylesheet" href="../css/styles.css">
+
+    <style>
+        @font-face {
+            font-family: 'HYXingKaiW';
+            src: url('../fonts/HYXingKaiW.ttf') format('truetype');
+        }
+        
+        body {
+            font-family: 'HYXingKaiW', 'Comic Sans MS', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('https://gd-hbimg.huaban.com/6e4c10c7c99a14394dc42c3c92ec6ba45db6530526420-PTw5no_fw658webp');
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: #5D3FD3; /* 深紫色 */
+            margin: 0;
+            padding: 0;
+        }
+        
+        h1.cover-title {
+            color: #FFC0CB; /* 粉色 */
+        }
+        h1, h2 {
+            color: #C71585; /* 玫红色 */
+            text-align: center;
+        }
+        
+        form {
+            background: rgba(255, 255, 255, 0.8);
+            margin: 2em auto;
+            width: 300px;
+            padding: 1.5em;
+            border: 2px solid #C71585;
+            border-radius: 1em;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left; /* 取消居中 */
+        }
+        
+        label {
+            margin-top: 1em;
+            display: block;
+            color: #5D3FD3; /* 深紫色 */
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.7em;
+            margin-bottom: 1em;
+            border: 1px solid #C71585;
+            border-radius: 0.5em;
+        }
+        
+        button {
+            padding: 0.7em;
+            color: #fff;
+            background-color: #C71585;
+            border: none;
+            border-radius: 0.5em;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        
+        button:hover {
+            background-color: #A01368;
+        }
+        
+        a {
+            color: #C71585;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .links {
+            text-align: center;
+        }
+        
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .button {
+            display: inline-block;
+            padding: 0.7em 1.5em;
+            margin: 0 1em;
+            color: #fff;
+            background-color: #C71585;
+            border: none;
+            border-radius: 0.5em;
+            cursor: pointer;
+            font-size: 1.2em;
+            text-decoration: none;
+        }
+        
+        .button:hover {
+            background-color: #A01368;
+        }
+        
+        /* 粉色花纹装饰 */
+        body:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://your-pink-pattern-image-url') repeat;
+            opacity: 0.2;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>用户控制面板</h2>
+    <div id="productList">
+        <!-- 商品列表 -->
+    </div>
+    <script src="../js/script.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const adminUsername = 'suri';
+            const adminPassword = 'bobo1313113';
+        
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            if (adminLoginForm) {
+                adminLoginForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+        
+                    if (username === adminUsername && password === adminPassword) {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        alert('用户名或密码错误');
+                    }
+                });
+            }
+        
+            const userLoginForm = document.getElementById('userLoginForm');
+            if (userLoginForm) {
+                userLoginForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+        
+                    const users = JSON.parse(localStorage.getItem('users')) || [];
+                    const user = users.find(user => user.username === username && user.password === password);
+        
+                    if (user) {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        alert('用户名或密码错误');
+                    }
+                });
+            }
+        
+            const addProductForm = document.getElementById('addProductForm');
+            if (addProductForm) {
+                addProductForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const productName = document.getElementById('productName').value;
+                    const productPrice = document.getElementById('productPrice').value;
+                    const products = JSON.parse(localStorage.getItem('products')) || [];
+                    const newProduct = {
+                        id: products.length + 1,
+                        name: productName,
+                        price: productPrice
+                    };
+                    products.push(newProduct);
+                    localStorage.setItem('products', JSON.stringify(products));
+                    alert(`添加商品: ${productName}, 价格: ${productPrice}`);
+                    addProductForm.reset();
+                    loadProducts();
+                });
+            }
+        
+            const addUserForm = document.getElementById('addUserForm');
+            if (addUserForm) {
+                addUserForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const newUsername = document.getElementById('newUsername').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const users = JSON.parse(localStorage.getItem('users')) || [];
+                    const newUser = {
+                        username: newUsername,
+                        password: newPassword
+                    };
+                    users.push(newUser);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    alert(`添加用户: ${newUsername}, 密码: ${newPassword}`);
+                    addUserForm.reset();
+                    loadUsers();
+                });
+            }
+        
+            function purchaseProduct(productId) {
+                const products = JSON.parse(localStorage.getItem('products')) || [];
+                const product = products.find(p => p.id == productId);
+                if (product) {
+                    const purchaseRecords = JSON.parse(localStorage.getItem('purchaseRecords')) || [];
+                    purchaseRecords.push({
+                        productId: productId,
+                        productName: product.name,
+                        productPrice: product.price
+                    });
+                    localStorage.setItem('purchaseRecords', JSON.stringify(purchaseRecords));
+                    alert(`购买成功: ${product.name}, 价格: ${product.price}`);
+                } else {
+                    alert('无效的商品ID');
+                }
+            }
+        
+            function loadProducts() {
+                const productList = document.getElementById('productList');
+                if (productList) {
+                    let products = JSON.parse(localStorage.getItem('products')) || [];
+                    
+                    // 添加默认的0元商品
+                    const defaultProduct = { id: 0, name: '为作者xavi点个赞', price: 0 };
+                    products = [defaultProduct, ...products];
+        
+                    productList.innerHTML = products.map(product => `
+                        <div>
+                            商品ID: ${product.id}, 名称: ${product.name}, 价格: ${product.price} 
+                            <button onclick="purchaseProduct(${product.id})">购买</button>
+                        </div>
+                    `).join('');
+                }
+            }
+        
+            function loadUsers() {
+                const userList = document.getElementById('userList');
+                if (userList) {
+                    const users = JSON.parse(localStorage.getItem('users')) || [];
+                    userList.innerHTML = users.map(user => `<div>用户名: ${user.username}</div>`).join('');
+                }
+            }
+        
+            function loadPurchaseRecords() {
+                const purchaseRecords = document.getElementById('purchaseRecords');
+                if (purchaseRecords) {
+                    const records = JSON.parse(localStorage.getItem('purchaseRecords')) || [];
+                    purchaseRecords.innerHTML = records.map(record => `<div>商品ID: ${record.productId}, 名称: ${record.productName}, 价格: ${record.productPrice}</div>`).join('');
+                }
+            }
+        
+            loadProducts();
+            loadUsers();
+            loadPurchaseRecords();
+        });
+        
+    </script>
+</body>
+
+</html>
